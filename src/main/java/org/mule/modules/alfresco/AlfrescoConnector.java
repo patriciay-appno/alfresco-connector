@@ -1353,6 +1353,159 @@ public abstract class AlfrescoConnector {
 	
 	}
 	
+	/**
+	 *   Get a collection of the sites in the repository. The collection can be filtered by name and/or site preset.
+	 * 	
+	 * 	  
+	 * @param nameFilter
+	 * @param sitePresetFilter	
+	 * @return Object
+	 * @throws IOException
+	 *             exception thrown
+	 */
+	
+	@Processor(friendlyName = "Get sites")
+	@Summary("Get a collection of sites.")
+	public  Object getSites (
+			@Optional @RestUriParam("nameFilter") String nameFilter,
+			@Optional @RestUriParam("sitePresetFilter") String sitePresetFilter,			
+			@Optional @RestQueryParam("pagesize") String pagesize)
+			
+			throws IOException {
+		
+		
+		try {			
+			
+			UriTemplate template = new UriTemplate("{serverUrl}/alfresco/service/api/sites");
+			URI uri = template.expand(serverUrl);
+			
+			GetMethod get = new GetMethod(uri.toString());
+			
+			get.addRequestHeader(AUTHORIZATION_HEADER, ConnectorHelper.setBasicAuthorization(connectionStrategy.getUsername(),
+					connectionStrategy.getPassword()));
+			
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			
+			if (nameFilter != null) {				
+				params.add(new NameValuePair("nf", nameFilter));				
+			}
+			if (sitePresetFilter != null) {				
+				params.add(new NameValuePair("spf", sitePresetFilter));				
+			}
+			if (pagesize != null) {				
+				params.add(new NameValuePair("size", pagesize));				
+			}	
+		
+			
+
+			get.setQueryString(params.toArray(new NameValuePair[params.size()]));
+						
+			HttpClient httpClient = new HttpClient();
+		    int result = httpClient.executeMethod(get);
+		    logger.info("Response status code: " + result);
+		    logger.info("Response body: ");
+		    logger.debug(get.getResponseBodyAsString());
+		   
+		    return get.getResponseBodyAsString();
+			
+		} catch (RestClientException e) {
+			throw new MuleRuntimeException(e);
+			
+		}
+		
+	}
+	
+	/**
+	 *  Creates a new Web site based on the site preset and details provided.
+	 *  
+     *  Please note: this method only creates a site at the repository level, it does not create a fully functional site. It should be considered for internal use only at the moment. Currently, creating a site programmatically needs to be done in the Share context, using the create-site module. Further information can be found at the address http://your_domain:8080/share/page/index/uri/modules/create-site.post within your Alfresco installation.
+     *  The following properties may be set.
+     *  
+     *  shortName
+     *      the shortName of the web site, mandatory, must be unique
+     *  sitePreset
+     *      the sitePreset
+     *  title
+     *      the title of the web site
+     *  description
+     *      the description for the web site
+     *  visibility
+     *      the site visibility, one of (PUBLIC,MODERATED,PRIVATE), defaults to PUBLIC
+     *  type
+     *      the type of site to create, optional 
+	 *
+	 * @param shortName
+	 * @param sitePreset
+	 * @param title
+	 * @param description
+	 * @param visibility
+	 * @param type
+	 * @return Object
+	 * @throws IOException
+	 *             exception thrown
+	 */
+	
+	/*@Processor(friendlyName = "Create site")
+	@Summary("Create site")
+	public Object createSite (
+			@RestPostParam("shortName") String shortName,	
+			@Optional @RestPostParam("sitePreset") @Default("site-dashboard") String sitePreset,
+			@Optional @RestPostParam("title") String title,
+			@Optional @RestPostParam("description") String description,
+			@Optional @RestPostParam("visibility") @Default("PUBLIC") String visibility,
+			@Optional @RestPostParam("type") String type)
+			
+			throws IOException {
+		
+		
+		try {			
+			
+			UriTemplate template = new UriTemplate("{serverUrl}/alfresco/service/api/sites");
+			URI uri = template.expand(serverUrl);
+			
+		
+			PostMethod post = new PostMethod(uri.toString());
+			
+			post.addRequestHeader(ACCEPT_HEADER, MediaType.APPLICATION_JSON.toString());
+			post.addRequestHeader(CONTENT_TYPE_HEADER,  MediaType.APPLICATION_JSON.toString());
+			post.addRequestHeader(AUTHORIZATION_HEADER, ConnectorHelper.setBasicAuthorization(connectionStrategy.getUsername(),
+					connectionStrategy.getPassword()));
+					
+			SiteRequest siteRequest = new SiteRequest();
+			
+			siteRequest = siteRequest.withShortName(shortName);
+			siteRequest = siteRequest.withSitePreset(sitePreset);
+			siteRequest = siteRequest.withDescription(description);
+			siteRequest = siteRequest.withTitle(title);
+			siteRequest = siteRequest.withVisibility(StringUtils.upperCase(visibility));
+			siteRequest = siteRequest.withType(type);
+			
+			
+			mapper = new ObjectMapper();
+			
+			String jsonValue = mapper.writeValueAsString(siteRequest);
+			
+			
+			StringRequestEntity requestEntity = new StringRequestEntity(jsonValue, "application/json", "UTF-8");
+			post.setRequestEntity(requestEntity);
+			
+			HttpClient httpClient = new HttpClient();
+		    int result = httpClient.executeMethod(post);
+		    logger.debug("Response status code: " + result);
+		    logger.debug("Response body: ");
+		    logger.debug(post.getResponseBodyAsString());
+		   
+		    return post.getResponseBodyAsString();
+			
+		} catch (RestClientException e) {
+			throw new MuleRuntimeException(e);
+			
+		}
+	
+	}
+	
+	*/
+	
 	
     public ConnectorConnectionStrategy getConnectionStrategy() {
         return connectionStrategy;

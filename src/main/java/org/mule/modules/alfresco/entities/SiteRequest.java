@@ -7,12 +7,18 @@ import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 
-@JsonPropertyOrder({"title", "description", "visibility"})
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class SiteRequest {
 
 
+	@JsonProperty("shortName")
+	private String shortName;
+	
+	@JsonProperty("sitePreset")
+	private String sitePreset;	
+	
 	@JsonProperty("title")
 	private String title;
 	
@@ -22,12 +28,27 @@ public class SiteRequest {
 	@JsonProperty("visibility")
 	// PUBLIC, MODERATED, PRIVATE
 	private String visibility;
+	
+	@JsonProperty("type")
+	private String type;
+	
+	
 
 	public SiteRequest() {
 	}
 
 	
 
+	public SiteRequest withShortName(String shortName) {
+		this.shortName = shortName;
+		return this;
+	}	
+	
+	public SiteRequest withSitePreset(String sitePreset) {
+		this.sitePreset = sitePreset;
+		return this;
+	}	
+	
 	public SiteRequest withTitle(String title) {
 		this.title = title;
 		return this;
@@ -43,6 +64,10 @@ public class SiteRequest {
 		return this;
 	}
 	
+	public SiteRequest withType(String type) {
+		this.type = type;
+		return this;
+	}	
 
 	@JsonProperty("title")
 	public String getTitle() {
@@ -73,6 +98,38 @@ public class SiteRequest {
 	public void setVisibility(String visibility) {
 		this.visibility = visibility;
 	}
+
+	@JsonProperty("shortName")
+	public String getShortName() {
+		return shortName;
+	}
+
+	@JsonProperty("shortName")
+	public void setShortName(String shortName) {
+		this.shortName = shortName;
+	}
+
+	@JsonProperty("sitePreset")
+	public String getSitePreset() {
+		return sitePreset;
+	}
+
+	@JsonProperty("sitePreset")
+	public void setSitePreset(String sitePreset) {
+		this.sitePreset = sitePreset;
+	}
+
+	@JsonProperty("type")
+	public String getType() {
+		return type;
+	}
+
+	@JsonProperty("type")
+	public void setType(String type) {
+		this.type = type;
+	}
+
+
 
 	@Override
 	public String toString() {
